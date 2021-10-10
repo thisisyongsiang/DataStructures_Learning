@@ -1,8 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "6g51WcBJcLg6+llajEVRkBek9IWaj4lN3S7oiWBqkep+kY9tkLzTS1iGGyOAtISztScWaaPmeC0NPuaDm1giJA==",
+  "dgSpecHash": "hyQ+e23h6+tFaRBOdXBowBdS3Edg9R5aQCasS0dzVwC4/uB3iuEM5tKQqLhSob53GAZZPg3F+VPuBeF5/884LA==",
   "success": true,
   "projectFilePath": "C:\\Users\\yongs\\Documents\\GitHub\\DataStructures_Learning\\DataStructures_Learning\\DataStructures_Learning.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk\\4.6.7\\opentk.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.compute\\4.6.7\\opentk.compute.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.core\\4.6.7\\opentk.core.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.graphics\\4.6.7\\opentk.graphics.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.input\\4.6.7\\opentk.input.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.mathematics\\4.6.7\\opentk.mathematics.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.openal\\4.6.7\\opentk.openal.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.redist.glfw\\3.3.0-pre20200830200122\\opentk.redist.glfw.3.3.0-pre20200830200122.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.windowing.common\\4.6.7\\opentk.windowing.common.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.windowing.desktop\\4.6.7\\opentk.windowing.desktop.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\opentk.windowing.graphicslibraryframework\\4.6.7\\opentk.windowing.graphicslibraryframework.4.6.7.nupkg.sha512",
+    "C:\\Users\\yongs\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+  ],
   "logs": []
 }

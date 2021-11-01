@@ -11,7 +11,6 @@ namespace DataStructures_Learning
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             var nativeWindowSettings = new NativeWindowSettings()
             {
                 Size = new Vector2i(800, 600),

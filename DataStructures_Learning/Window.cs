@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Diagnostics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -18,26 +18,33 @@ namespace DataStructures_Learning
         private int _vertexBufferObject;
         private int _vertexArrayObject;
         private int _elementBufferObject;
-
+        private Stopwatch _timer;
         private Shader _shader;
-    //    float[] vertices = {
-    //-0.5f, -0.5f, 0.0f, //Bottom-left vertex
-    // 0.5f, -0.5f, 0.0f, //Bottom-right vertex
-    // 0.0f,  0.5f, 0.0f  //Top vertex
-    //    };
-
         float[] vertices = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left
-};
-//        uint[] indices = {  // note that we start from 0!
-//    0, 1, 3,   // first triangle
-//    1, 2, 3    // second triangle
-//};
+    -0.5f, -0.5f, 0.0f, //Bottom-left vertex
+     0.5f, -0.5f, 0.0f, //Bottom-right vertex
+     0.0f,  0.5f, 0.0f  //Top vertex
+        };
+        private readonly float[] _vertices =
+  {
+      // positions        // colors
+      0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+     -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+      0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
+    };
+
+        //        float[] vertices = {
+        //     0.5f,  0.5f, 0.0f,  // top right
+        //     0.5f, -0.5f, 0.0f,  // bottom right
+        //    -0.5f, -0.5f, 0.0f,  // bottom left
+        //    -0.5f,  0.5f, 0.0f   // top left
+        //};
+        //uint[] indices = {  // note that we start from 0!
+        //    0, 1, 3,   // first triangle
+        //    1, 2, 3    // second triangle
+        //};
         uint[] indices = {  // note that we start from 0!
-    0, 1, 2,3,0   // first triangle
+    0, 1, 2   // first triangle
 };
         public Window(GameWindowSettings gameWindowSettings,NativeWindowSettings nativeWindowSettings)
             :base(gameWindowSettings, nativeWindowSettings)
@@ -58,9 +65,13 @@ namespace DataStructures_Learning
         protected override void OnLoad()
         {
             base.OnLoad();
-            int nrAttributes = 0;
-            GL.GetInteger(GetPName.MaxVertexAttribs, out nrAttributes);
-            Console.WriteLine("Maximum number of vertex attributes supported: " + nrAttributes);
+            //int nrAttributes;
+            //GL.Enable(EnableCap.Blend);
+            //GL.Enable(EnableCap.LineSmooth);
+            //GL.Enable(EnableCap.PolygonSmooth);
+            GL.PointSize(10.0f);
+            //GL.GetInteger(GetPName.MaxVertexAttribs, out nrAttributes);
+            //Console.WriteLine("Maximum number of vertex attributes supported: " + nrAttributes);
             //Clears the background, and sets input color value.
             //Parameters for color is a normalized value of Red Green Blue and Alpha.
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -77,8 +88,9 @@ namespace DataStructures_Learning
             //StaticDraw: the data will most likely not change at all or very rarely.
             //DynamicDraw: the data is likely to change a lot.
             //StreamDraw: the data will change every time it is drawn.
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+            //GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
+            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
             //Creating the shaders to tell opengl how to turn the vertice into pixels
             // Shaders are tiny programs that live on the GPU. OpenGL uses them to handle the vertex-to-pixel pipeline.
             _shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
@@ -92,34 +104,44 @@ namespace DataStructures_Learning
             //Linking Vertex Attributes
             //gl vertexattribpointer function tells opengl the format of the data, and associates the current array buffer with the vertexarrayobject
             //this call sets the attribute to source data from current array buffer
-            GL.VertexAttribPointer(_shader.GetAttribLocation("aPosition"), 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(_shader.GetAttribLocation("aPosition"), 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(_shader.GetAttribLocation("aPosition"));
 
+            GL.VertexAttribPointer(_shader.GetAttribLocation("aColor"), 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3*sizeof(float));
+            GL.EnableVertexAttribArray(_shader.GetAttribLocation("aColor"));
             _elementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
             GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
             _shader.Use();
-
+            _timer = new Stopwatch();
+            _timer.Start();
         }
 
         //Render Loop
         protected override void OnRenderFrame(FrameEventArgs args)
         {
+
             base.OnRenderFrame(args);
+            double timeValue = _timer.Elapsed.TotalSeconds;
+            double multiplier = 10.0;
+            float gValue = (float)Math.Sin(timeValue * multiplier) / 2.0f + 0.5f;
+            int vertexColorLocation = GL.GetUniformLocation(_shader.Handle, "u_Color");
+            //GL.PointSize((float)(gValue * 10.0));
+            //GL.Uniform4(vertexColorLocation, 0.0f, gValue, 0.0f, 0.2f);
+
             //Clears the image, using what was set at GL.ClearColor
             //OpenGL has multiple kind of data that can be rendered
             //So you may need to clear multiple kind of buffers, and can be achieved by using multiple bit flags.
             //However, here the modification is color, so color buffer is the only thing required to be cleared.
             GL.Clear(ClearBufferMask.ColorBufferBit);
-
             _shader.Use();
             //Bind the VAO
-            //GL.BindVertexArray(_vertexArrayObject);
+            GL.BindVertexArray(_vertexArrayObject);
             //Call the drawing function
-            //GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
             //GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             //GL.DrawElements(PrimitiveType.Points, indices.Length, DrawElementsType.UnsignedInt, 0);
-            GL.DrawElements(PrimitiveType.LineLoop, indices.Length, DrawElementsType.UnsignedInt, 0);
+           // GL.DrawElements(PrimitiveType.LineLoop, indices.Length, DrawElementsType.UnsignedInt, 0);
             //OpenGL has 2 buffers "double-buffered" that is managed by the window.
             //One is rendered to, while the other is currently displayed by the window.
             //This is to avoid screen tearing, Something that happens if the buffer is modified while being displayed

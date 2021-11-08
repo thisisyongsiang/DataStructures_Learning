@@ -20,7 +20,7 @@ namespace DataStructures_Learning
             };
 
             // This line creates a new instance, and wraps the instance in a using statement so it's automatically disposed once we've exited the block.
-            using (var window = new Window(GameWindowSettings.Default, nativeWindowSettings))
+            using (var window = new Window2(GameWindowSettings.Default, nativeWindowSettings))
             {
                 window.Run();
             }

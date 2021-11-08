@@ -6,10 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="dot.frag" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.6.7" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Shaders\dot.frag">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Shaders\shader.frag">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

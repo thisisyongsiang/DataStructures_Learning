@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
@@ -12,10 +13,16 @@ namespace DataStructures_Learning
     public class Shader :IDisposable
     {
         //location of the shader program at the end after compilation
-        int _handle;
+        private readonly int _handle;
+
+        private readonly Dictionary<string, int> _uniformLocations;
 
         private bool disposedValue=false;
 
+        public int Handle
+        {
+            get { return _handle; }
+        }
         public Shader(string vertexPath,string fragmentPath)
         {
             //loading shaders from individual shader files
@@ -55,7 +62,14 @@ namespace DataStructures_Learning
             GL.AttachShader(_handle, fragmentShader);
 
             GL.LinkProgram(_handle);
-
+            // Check for linking errors
+            GL.GetProgram(_handle, GetProgramParameterName.LinkStatus, out var code);
+            //if (code != (int)All.True)
+            //{
+            //    // We can use `GL.GetProgramInfoLog(program)` to get information about the error.
+            //    var infoLogLink = GL.GetProgramInfoLog(_handle);
+            //    throw new Exception($"Error occurred whilst linking Program({_handle})");
+            //}
             //Once linked, we can remove the shaders as they are useless now
             //Compiled data is copied to the shader program when linked. We dont need the individual shaders that are attached to the program.
             //Detach and delete the shaders
@@ -63,6 +77,16 @@ namespace DataStructures_Learning
             GL.DetachShader(_handle, fragmentShader);
             GL.DeleteShader(vertexShader);
             GL.DeleteShader(fragmentShader);
+            int numberOfUniforms;
+            GL.GetProgram(_handle, GetProgramParameterName.ActiveUniforms, out numberOfUniforms);
+
+            _uniformLocations = new Dictionary<string, int>();
+            for(int i=0;i< numberOfUniforms; i++)
+            {
+                var key = GL.GetActiveUniform(_handle, i, out _, out _);
+                var location = GL.GetUniformLocation(_handle, key);
+                _uniformLocations.Add(key, location);
+            }
         }
 
         //Method to use the shader
@@ -76,6 +100,13 @@ namespace DataStructures_Learning
         {
             return GL.GetAttribLocation(_handle, attribName);
         }
+
+        public void SetMatrix4(string matName, Matrix4 data)
+        {
+            GL.UseProgram(_handle);
+            GL.UniformMatrix4(_uniformLocations[matName], true, ref data);
+        }
+
         //Dispose Pattern
         protected virtual void Dispose(bool disposing)
         {
